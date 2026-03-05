@@ -79,7 +79,7 @@ export function RegisterForm() {
       // 5. Store masterKey in sessionStorage
       sessionStorage.setItem("anyterm_master_key", toBase64(masterKey));
 
-      router.push("/dashboard");
+      router.push(`/verify-email?email=${encodeURIComponent(values.email)}`);
     } catch {
       setServerError("Registration failed");
     }

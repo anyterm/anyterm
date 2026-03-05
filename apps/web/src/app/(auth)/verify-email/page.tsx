@@ -10,6 +10,7 @@ function VerifyEmailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
+  const email = searchParams.get("email");
 
   const [status, setStatus] = useState<"idle" | "verifying" | "success" | "error">(
     token ? "verifying" : "idle",
@@ -45,14 +46,15 @@ function VerifyEmailContent() {
   }, [resendCooldown]);
 
   async function handleResend() {
+    if (!email) return;
     setResendCooldown(60);
     try {
       await authClient.sendVerificationEmail({
-        email: "", // better-auth uses current session
+        email,
         callbackURL: "/verify-email",
       });
-    } catch {
-      // silently fail — user can try again
+    } catch (err) {
+      console.error("[verify-email] Failed to resend:", err);
     }
   }
 
@@ -105,7 +107,7 @@ function VerifyEmailContent() {
         <button
           type="button"
           onClick={handleResend}
-          disabled={resendCooldown > 0}
+          disabled={resendCooldown > 0 || !email}
           className="rounded-lg border border-zinc-800 px-4 py-3 text-sm text-zinc-400 transition hover:border-zinc-700 hover:text-zinc-300 disabled:opacity-50"
         >
           {resendCooldown > 0
