@@ -10,7 +10,7 @@ WORKDIR /app
 # Stage 2: deps — install all monorepo dependencies
 # -----------------------------------------------------------
 FROM base AS deps
-COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json .npmrc ./
 COPY apps/server/package.json apps/server/package.json
 COPY packages/utils/package.json packages/utils/package.json
 COPY packages/db/package.json packages/db/package.json
@@ -35,8 +35,16 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-# Copy single bundled file (all deps included via noExternal)
-COPY --from=build /app/apps/server/dist/index.js dist/index.js
+# Copy built artifacts and production node_modules
+COPY --from=build /app/apps/server/dist apps/server/dist
+COPY --from=build /app/apps/server/package.json apps/server/package.json
+COPY --from=build /app/packages/utils/dist packages/utils/dist
+COPY --from=build /app/packages/utils/package.json packages/utils/package.json
+COPY --from=build /app/packages/db/dist packages/db/dist
+COPY --from=build /app/packages/db/package.json packages/db/package.json
+COPY --from=build /app/node_modules node_modules
+COPY --from=build /app/package.json package.json
+COPY --from=build /app/pnpm-workspace.yaml pnpm-workspace.yaml
 
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 hono
@@ -47,4 +55,4 @@ EXPOSE ${PORT:-3001}
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget -qO- http://localhost:${PORT:-${WS_PORT:-3001}}/health || exit 1
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "apps/server/dist/index.js"]

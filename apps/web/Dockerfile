@@ -10,7 +10,7 @@ WORKDIR /app
 # Stage 2: deps — install all monorepo dependencies
 # -----------------------------------------------------------
 FROM base AS deps
-COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json .npmrc ./
 COPY apps/web/package.json apps/web/package.json
 COPY packages/utils/package.json packages/utils/package.json
 COPY packages/db/package.json packages/db/package.json
