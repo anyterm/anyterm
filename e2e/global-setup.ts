@@ -1,6 +1,6 @@
 import { GenericContainer, type StartedTestContainer } from "testcontainers";
 import { spawn, type ChildProcess, execSync } from "node:child_process";
-import { writeFileSync, unlinkSync, existsSync } from "node:fs";
+import { writeFileSync, readFileSync, unlinkSync, existsSync, cpSync } from "node:fs";
 import { resolve } from "node:path";
 
 const ENV_FILE = resolve(import.meta.dirname, ".e2e-env.json");
@@ -95,16 +95,43 @@ export async function setup() {
     });
   }
 
+  // NEXT_PUBLIC_* vars are inlined at build time. If they changed since the
+  // last build (e.g. CI built with defaults, then e2e needs port 13456),
+  // we must rebuild even when source files haven't changed.
   const webOutput = resolve(webDir, ".next/BUILD_ID");
-  if (isFresh(webOutput, resolve(webDir, "src"))) {
+  const envFingerprint = JSON.stringify({
+    NEXT_PUBLIC_APP_URL: sharedEnv.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_WS_URL: sharedEnv.NEXT_PUBLIC_WS_URL,
+    NEXT_PUBLIC_E2E: sharedEnv.NEXT_PUBLIC_E2E,
+    WS_PORT: String(WS_PORT),
+  });
+  const envFile = resolve(webDir, ".next/.e2e-env");
+  const envMatch = existsSync(envFile) && readFileSync(envFile, "utf-8") === envFingerprint;
+
+  if (isFresh(webOutput, resolve(webDir, "src")) && envMatch) {
     console.log("[e2e] Web build is fresh, skipping.");
   } else {
     console.log("[e2e] Building web server...");
     execSync("pnpm --filter @anyterm/web build", {
       cwd: rootDir,
-      env: { ...sharedEnv, NODE_ENV: "production" },
+      env: { ...sharedEnv, NODE_ENV: "production", WS_PORT: String(WS_PORT) },
       stdio: "pipe",
     });
+    writeFileSync(envFile, envFingerprint);
+  }
+
+  // Copy static assets into standalone output (required for standalone mode).
+  // Mirrors the Dockerfile: standalone output doesn't include static files.
+  const standaloneWebDir = resolve(webDir, ".next/standalone/apps/web");
+  const staticSrc = resolve(webDir, ".next/static");
+  const staticDest = resolve(standaloneWebDir, ".next/static");
+  if (existsSync(staticSrc)) {
+    cpSync(staticSrc, staticDest, { recursive: true });
+  }
+  const publicSrc = resolve(webDir, "public");
+  const publicDest = resolve(standaloneWebDir, "public");
+  if (existsSync(publicSrc)) {
+    cpSync(publicSrc, publicDest, { recursive: true });
   }
 
   // Start WebSocket server from pre-built output
@@ -117,11 +144,11 @@ export async function setup() {
 
   const wsReady = waitForOutput(wsProcess, "anyterm ws server ready on", "ws-server");
 
-  // Start Next.js in production mode
-  console.log("[e2e] Starting web server...");
-  webProcess = spawn("npx", ["next", "start", "--port", String(WEB_PORT)], {
-    cwd: webDir,
-    env: { ...sharedEnv, PORT: String(WEB_PORT) },
+  // Start Next.js standalone server (next start does not work with output: "standalone")
+  console.log("[e2e] Starting web server (standalone)...");
+  webProcess = spawn("node", ["server.js"], {
+    cwd: standaloneWebDir,
+    env: { ...sharedEnv, PORT: String(WEB_PORT), HOSTNAME: "0.0.0.0" },
     stdio: ["pipe", "pipe", "pipe"],
   });
 

@@ -118,6 +118,9 @@ describe("Daemon PTY Exit (real daemon)", () => {
         env: {
           ...process.env,
           HOME: tmpHome,
+          // Ensure conf (via env-paths) resolves config under tmpHome on Linux.
+          // Without this, an inherited XDG_CONFIG_HOME would override the path.
+          XDG_CONFIG_HOME: path.join(tmpHome, ".config"),
         },
         stdio: ["pipe", "pipe", "pipe"],
       },
