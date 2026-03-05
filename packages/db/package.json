@@ -6,11 +6,12 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js",
-    "./schema": "./dist/schema/index.js"
+    "./schema": "./dist/schema/index.js",
+    "./migrate": "./dist/migrate.js"
   },
   "scripts": {
-    "build": "tsup src/index.ts src/schema/index.ts --format esm --dts",
-    "dev": "tsup src/index.ts src/schema/index.ts --format esm --dts --watch",
+    "build": "tsup src/index.ts src/schema/index.ts src/migrate.ts --format esm --dts",
+    "dev": "tsup src/index.ts src/schema/index.ts src/migrate.ts --format esm --dts --watch",
     "db:generate": "drizzle-kit generate",
     "db:generate:auth": "npx @better-auth/cli generate --config ../../apps/web/src/lib/auth.ts --output ./src/schema/auth.ts --yes",
     "db:migrate": "drizzle-kit migrate",
