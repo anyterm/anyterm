@@ -134,7 +134,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden">
-      <header className="shrink-0 border-b border-white/[0.06] bg-zinc-950/80 backdrop-blur-xl">
+      <header className="relative z-10 shrink-0 border-b border-white/[0.06] bg-zinc-950/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="transition hover:opacity-85" aria-label="Anyterm dashboard">
