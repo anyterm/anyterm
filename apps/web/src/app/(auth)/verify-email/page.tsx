@@ -10,13 +10,11 @@ function VerifyEmailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
-  const email = searchParams.get("email");
 
   const [status, setStatus] = useState<"idle" | "verifying" | "success" | "error">(
     token ? "verifying" : "idle",
   );
   const [errorMsg, setErrorMsg] = useState("");
-  const [resendCooldown, setResendCooldown] = useState(0);
 
   const verify = useCallback(async () => {
     if (!token) return;
@@ -38,25 +36,6 @@ function VerifyEmailContent() {
   useEffect(() => {
     if (token) verify();
   }, [token, verify]);
-
-  useEffect(() => {
-    if (resendCooldown <= 0) return;
-    const timer = setTimeout(() => setResendCooldown((c) => c - 1), 1000);
-    return () => clearTimeout(timer);
-  }, [resendCooldown]);
-
-  async function handleResend() {
-    if (!email) return;
-    setResendCooldown(60);
-    try {
-      await authClient.sendVerificationEmail({
-        email,
-        callbackURL: "/verify-email",
-      });
-    } catch (err) {
-      console.error("[verify-email] Failed to resend:", err);
-    }
-  }
 
   // Token present — verifying or showing result
   if (token) {
@@ -104,19 +83,12 @@ function VerifyEmailContent() {
       </div>
 
       <div className="flex flex-col gap-3">
-        <button
-          type="button"
-          onClick={handleResend}
-          disabled={resendCooldown > 0 || !email}
-          className="rounded-lg border border-zinc-800 px-4 py-3 text-sm text-zinc-400 transition hover:border-zinc-700 hover:text-zinc-300 disabled:opacity-50"
-        >
-          {resendCooldown > 0
-            ? `Resend in ${resendCooldown}s`
-            : "Resend verification email"}
-        </button>
+        <p className="text-center text-sm text-zinc-500">
+          Didn&apos;t receive it? Try signing in again to resend.
+        </p>
         <Link
           href="/login"
-          className="text-center text-sm text-zinc-500 hover:text-white"
+          className="rounded-lg border border-zinc-800 px-4 py-3 text-center text-sm text-zinc-400 transition hover:border-zinc-700 hover:text-zinc-300"
         >
           Back to sign in
         </Link>

@@ -50,8 +50,8 @@ export function LoginForm() {
       });
 
       if (result.error) {
-        if (result.error.code === "EMAIL_NOT_VERIFIED") {
-          router.push(`/verify-email?email=${encodeURIComponent(values.email)}`);
+        if (result.error.status === 403) {
+          router.push("/verify-email");
           return;
         }
         setServerError(result.error.message || "Login failed");
