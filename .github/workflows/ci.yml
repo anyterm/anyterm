@@ -51,7 +51,7 @@ jobs:
       - name: Build web image
         run: docker build -f apps/web/Dockerfile -t anyterm-web .
 
-      - name: Verify server health check
+      - name: Verify server starts and responds
         run: |
           docker run -d --name server -p 3001:3001 \
             -e PORT=3001 \
@@ -63,6 +63,19 @@ jobs:
           sleep 3
           curl -sf http://localhost:3001/health
           docker rm -f server
+
+      - name: Verify web starts and responds
+        run: |
+          docker run -d --name web -p 3000:3000 \
+            -e PORT=3000 \
+            -e DATABASE_URL=postgresql://fake:fake@localhost/fake \
+            -e REDIS_URL=redis://localhost:6379 \
+            -e BETTER_AUTH_SECRET=test-secret \
+            -e BETTER_AUTH_URL=http://localhost:3000 \
+            anyterm-web
+          sleep 5
+          curl -sf -o /dev/null -w "%{http_code}" http://localhost:3000 | grep -q "200\|308"
+          docker rm -f web
 
   e2e:
     name: E2E Tests
