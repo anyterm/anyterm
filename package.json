@@ -13,7 +13,8 @@
     "test": "pnpm -r test",
     "test:e2e": "pnpm --filter @anyterm/e2e test",
     "dev:mobile": "pnpm --filter @anyterm/mobile start",
-    "build:mobile": "pnpm --filter @anyterm/mobile build:dev"
+    "build:mobile": "pnpm --filter @anyterm/mobile build:dev",
+    "publish:cli": "pnpm --filter anyterm... build && pnpm --filter anyterm publish --access public --no-git-checks"
   },
   "engines": {
     "node": ">=20"
