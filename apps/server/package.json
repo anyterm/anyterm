@@ -1,0 +1,28 @@
+{
+  "name": "@anyterm/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file .env --import tsx --watch src/index.ts",
+    "build": "tsup src/index.ts --format esm",
+    "start": "node dist/index.js",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.10",
+    "@hono/node-ws": "^1.3.0",
+    "@anyterm/db": "workspace:*",
+    "@anyterm/utils": "workspace:*",
+    "drizzle-orm": "^0.45.1",
+    "hono": "^4.12.5",
+    "ioredis": "^5.10.0",
+    "nanoid": "^5.1.6"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  }
+}

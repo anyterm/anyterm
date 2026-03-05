@@ -1,0 +1,16 @@
+node_modules
+dist
+.next
+.env
+.env.local
+*.tsbuildinfo
+drizzle/meta
+.DS_Store
+e2e/.e2e-env.json
+.expo
+ios/
+android/
+private/
+*.pem
+*.key
+*.cert

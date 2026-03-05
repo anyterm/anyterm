@@ -1,0 +1,10 @@
+<svg width="316" height="72" viewBox="0 0 316 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="4" y="4" width="64" height="64" rx="18" fill="#090D18" />
+  <rect x="4.75" y="4.75" width="62.5" height="62.5" rx="17.25" stroke="#1F2937" stroke-width="1.5" />
+  <circle cx="36" cy="36" r="19.5" stroke="#14B8A6" stroke-width="3.2" opacity="0.92" />
+  <path d="M25.5 27.5L34 36L25.5 44.5" stroke="#F8FAFC" stroke-width="3.3" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M39.5 44.5H48.5" stroke="#F8FAFC" stroke-width="3.3" stroke-linecap="round" />
+  <path d="M50.8 22C55.4 25.5 58.2 30.9 58.2 36.8C58.2 42.7 55.4 48.1 50.8 51.6" stroke="#34D399" stroke-width="2.5" stroke-linecap="round" opacity="0.9" />
+  <path d="M21.2 22C16.6 25.5 13.8 30.9 13.8 36.8C13.8 42.7 16.6 48.1 21.2 51.6" stroke="#22D3EE" stroke-width="2.5" stroke-linecap="round" opacity="0.8" />
+  <text x="84" y="48" fill="#F8FAFC" font-family="Inter, SF Pro Display, Segoe UI, sans-serif" font-size="34" font-weight="700" letter-spacing="-0.6">anyterm</text>
+</svg>

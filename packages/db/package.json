@@ -1,0 +1,30 @@
+{
+  "name": "@anyterm/db",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./schema": "./dist/schema/index.js"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts src/schema/index.ts --format esm --dts",
+    "dev": "tsup src/index.ts src/schema/index.ts --format esm --dts --watch",
+    "db:generate": "drizzle-kit generate",
+    "db:generate:auth": "npx @better-auth/cli generate --config ../../apps/web/src/lib/auth.ts --output ./src/schema/auth.ts --yes",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.1",
+    "nanoid": "^5.1.6",
+    "postgres": "^3.4.8"
+  },
+  "devDependencies": {
+    "dotenv": "^17.3.1",
+    "drizzle-kit": "^0.31.9",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "anyterm",
+  "private": true,
+  "license": "SEE LICENSE IN LICENSE",
+  "scripts": {
+    "dev": "pnpm --filter @anyterm/server dev & pnpm --filter @anyterm/web dev",
+    "dev:web": "pnpm --filter @anyterm/web dev",
+    "dev:server": "pnpm --filter @anyterm/server dev",
+    "build": "pnpm -r build",
+    "db:generate": "pnpm --filter @anyterm/db db:generate",
+    "db:migrate": "pnpm --filter @anyterm/db db:migrate",
+    "db:studio": "pnpm --filter @anyterm/db db:studio",
+    "test": "pnpm -r test",
+    "test:e2e": "pnpm --filter @anyterm/e2e test",
+    "dev:mobile": "pnpm --filter @anyterm/mobile start",
+    "build:mobile": "pnpm --filter @anyterm/mobile build:dev"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "devDependencies": {
+    "dotenv": "^17.3.1"
+  }
+}
