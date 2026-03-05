@@ -68,6 +68,7 @@ jobs:
         run: |
           docker run -d --name web -p 3000:3000 \
             -e PORT=3000 \
+            -e SKIP_MIGRATIONS=1 \
             -e DATABASE_URL=postgresql://fake:fake@localhost/fake \
             -e REDIS_URL=redis://localhost:6379 \
             -e BETTER_AUTH_SECRET=test-secret \

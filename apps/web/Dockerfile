@@ -49,9 +49,12 @@ RUN addgroup --system --gid 1001 nodejs && \
 COPY --from=build /app/apps/web/.next/standalone ./
 COPY --from=build /app/apps/web/.next/static apps/web/.next/static
 
-# Copy drizzle migrations for runtime db:migrate
+# Copy drizzle migrations + deps for auto-migrate on startup
 COPY --from=build /app/packages/db/drizzle packages/db/drizzle
-COPY --from=build /app/packages/db/drizzle.config.ts packages/db/drizzle.config.ts
+COPY --from=build /app/packages/db/dist packages/db/dist
+COPY --from=build /app/packages/db/package.json packages/db/package.json
+COPY --from=build /app/node_modules/drizzle-orm node_modules/drizzle-orm
+COPY --from=build /app/node_modules/postgres node_modules/postgres
 
 USER nextjs
 
@@ -59,4 +62,7 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-CMD ["node", "apps/web/server.js"]
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD wget -qO- http://localhost:3000/ || exit 1
+
+CMD ["sh", "-c", "if [ \"$SKIP_MIGRATIONS\" != \"1\" ]; then node -e \"import('./packages/db/dist/migrate.js').then(m => m.runMigrations(process.env.DATABASE_URL))\"; fi && exec node apps/web/server.js"]
