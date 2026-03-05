@@ -37,6 +37,33 @@ jobs:
           pnpm --filter @anyterm/server test
           pnpm --filter anyterm test
 
+  docker:
+    name: Docker Build Smoke Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build server image
+        run: docker build -f apps/server/Dockerfile -t anyterm-server .
+
+      - name: Build web image
+        run: docker build -f apps/web/Dockerfile -t anyterm-web .
+
+      - name: Verify server health check
+        run: |
+          docker run -d --name server -p 3001:3001 \
+            -e PORT=3001 \
+            -e DATABASE_URL=postgresql://fake:fake@localhost/fake \
+            -e REDIS_URL=redis://localhost:6379 \
+            -e BETTER_AUTH_SECRET=test-secret \
+            -e BETTER_AUTH_URL=http://localhost:3000 \
+            anyterm-server
+          sleep 3
+          curl -sf http://localhost:3001/health
+          docker rm -f server
+
   e2e:
     name: E2E Tests
     runs-on: ubuntu-latest
