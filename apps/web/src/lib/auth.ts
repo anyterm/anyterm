@@ -21,16 +21,20 @@ function buildPlugins(): BetterAuthPlugin[] {
       allowUserToCreateOrganization: true,
       async sendInvitationEmail(data) {
         const inviteLink = `${process.env.BETTER_AUTH_URL || "http://localhost:3000"}/accept-invitation/${data.id}`;
-        sendEmail({
-          to: data.email,
-          subject: `Join ${data.organization.name} on anyterm`,
-          react: jsx(OrgInvitation, {
-            inviterName: data.inviter.user.name,
-            orgName: data.organization.name,
-            role: data.role as string,
-            url: inviteLink,
-          }),
-        }).catch((err) => console.error("[auth] Failed to send invitation email:", err));
+        try {
+          await sendEmail({
+            to: data.email,
+            subject: `Join ${data.organization.name} on anyterm`,
+            react: jsx(OrgInvitation, {
+              inviterName: data.inviter.user.name,
+              orgName: data.organization.name,
+              role: data.role as string,
+              url: inviteLink,
+            }),
+          });
+        } catch (err) {
+          console.error("[auth] Failed to send invitation email:", err);
+        }
       },
     }),
     sso(),
@@ -104,20 +108,28 @@ export const auth = betterAuth({
     minPasswordLength: 8,
     requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
-      sendEmail({
-        to: user.email,
-        subject: "Reset your password",
-        react: jsx(ResetPassword, { url, email: user.email }),
-      }).catch((err) => console.error("[auth] Failed to send reset password email:", err));
+      try {
+        await sendEmail({
+          to: user.email,
+          subject: "Reset your password",
+          react: jsx(ResetPassword, { url, email: user.email }),
+        });
+      } catch (err) {
+        console.error("[auth] Failed to send reset password email:", err);
+      }
     },
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {
-      sendEmail({
-        to: user.email,
-        subject: "Verify your email",
-        react: jsx(VerifyEmail, { url }),
-      }).catch((err) => console.error("[auth] Failed to send verification email:", err));
+      try {
+        await sendEmail({
+          to: user.email,
+          subject: "Verify your email",
+          react: jsx(VerifyEmail, { url }),
+        });
+      } catch (err) {
+        console.error("[auth] Failed to send verification email:", err);
+      }
     },
     autoSignInAfterVerification: true,
   },
