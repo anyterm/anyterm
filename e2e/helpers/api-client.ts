@@ -25,11 +25,30 @@ export class ApiClient {
     };
   }
 
+  private async fetchWithRetry(
+    url: string,
+    init: RequestInit,
+    retries = 2,
+  ): Promise<Response> {
+    for (let i = 0; i <= retries; i++) {
+      try {
+        return await fetch(url, init);
+      } catch (err: unknown) {
+        const isSocketError =
+          err instanceof TypeError &&
+          err.message === "fetch failed" &&
+          (err.cause as { code?: string })?.code === "UND_ERR_SOCKET";
+        if (!isSocketError || i === retries) throw err;
+      }
+    }
+    throw new Error("unreachable");
+  }
+
   private async graphql<T>(
     query: string,
     variables?: Record<string, unknown>,
   ): Promise<{ status: number; body: ApiResponse<T> }> {
-    const res = await fetch(`${this.baseUrl}/api/graphql`, {
+    const res = await this.fetchWithRetry(`${this.baseUrl}/api/graphql`, {
       method: "POST",
       headers: this.authHeaders(),
       body: JSON.stringify({ query, variables }),
