@@ -196,9 +196,6 @@ importers:
 
   packages/cli:
     dependencies:
-      '@anyterm/utils':
-        specifier: workspace:*
-        version: link:../utils
       '@xterm/addon-serialize':
         specifier: ^0.14.0
         version: 0.14.0
@@ -224,6 +221,9 @@ importers:
         specifier: ^8.19.0
         version: 8.19.0
     devDependencies:
+      '@anyterm/utils':
+        specifier: workspace:*
+        version: link:../utils
       '@types/ws':
         specifier: ^8.18.1
         version: 8.18.1
