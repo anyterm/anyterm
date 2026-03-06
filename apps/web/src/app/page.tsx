@@ -17,13 +17,17 @@ export default function Home() {
   return (
     <div className="relative min-h-screen font-body">
       {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
-        <Script
-          src="https://cloud.umami.is/script.js"
-          data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
-          data-auto-track="false"
-          strategy="afterInteractive"
-          onLoad="umami.track()"
-        />
+        <>
+          <Script
+            src="https://cloud.umami.is/script.js"
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+            data-auto-track="false"
+            strategy="afterInteractive"
+          />
+          <Script id="umami-track" strategy="lazyOnload">
+            {`window.umami?.track()`}
+          </Script>
+        </>
       )}
       <div className="bg-grid pointer-events-none fixed inset-0 z-0" />
       <Nav />
