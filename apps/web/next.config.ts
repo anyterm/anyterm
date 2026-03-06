@@ -48,7 +48,7 @@ const nextConfig: NextConfig = {
             "style-src 'self' 'unsafe-inline'",
             "img-src 'self' data: blob:",
             "font-src 'self' data:",
-            `connect-src 'self'${process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID ? " https://cloud.umami.is" : ""} ${process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:3001"} ${process.env.NEXT_PUBLIC_WS_URL?.replace("ws", "http") || "http://localhost:3001"} ${process.env.NEXT_PUBLIC_PREVIEW_ORIGIN || ""}`.trim(),
+            `connect-src 'self'${process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID ? " https://cloud.umami.is https://api-gateway.umami.dev" : ""} ${process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:3001"} ${process.env.NEXT_PUBLIC_WS_URL?.replace("ws", "http") || "http://localhost:3001"} ${process.env.NEXT_PUBLIC_PREVIEW_ORIGIN || ""}`.trim(),
             `frame-src 'self' ${process.env.NEXT_PUBLIC_PREVIEW_ORIGIN || ""}`.trim(),
             "frame-ancestors 'none'",
             "base-uri 'self'",
