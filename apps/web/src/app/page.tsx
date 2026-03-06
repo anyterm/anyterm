@@ -20,7 +20,9 @@ export default function Home() {
         <Script
           src="https://cloud.umami.is/script.js"
           data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+          data-auto-track="false"
           strategy="afterInteractive"
+          onLoad="umami.track()"
         />
       )}
       <div className="bg-grid pointer-events-none fixed inset-0 z-0" />
